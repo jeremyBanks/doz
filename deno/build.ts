@@ -3,7 +3,7 @@ import * as path from 'https://deno.land/std@0.79.0/path/mod.ts';
 import { walk } from 'https://deno.land/std@0.78.0/fs/walk.ts';
 
 const nodeRoot = '../src';
-const denoRoot = './src';
+const denoRoot = './lib';
 
 if (new URL(import.meta.url).protocol === 'file:') {
   Deno.chdir(new URL('.', import.meta.url).pathname);

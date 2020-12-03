@@ -40,7 +40,7 @@ jobs:
         with:
           deno-version: ${{ matrix.deno }}
       - run: |
-          cd deno_lib
+          cd deno
           deno test
 
   autofix:
@@ -57,8 +57,8 @@ jobs:
         with:
           deno-version: '1'
       - run: npm install
-      - name: Rebuild deno_lib/
-        run: deno run --allow-read --allow-write deno_lib/build.ts
+      - name: Rebuild deno/
+        run: deno run --allow-read --allow-write deno/build.ts
       - name: Format with Prettier
         run: npm run-script format
       - name: Check for Changes
