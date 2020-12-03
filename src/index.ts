@@ -43,7 +43,7 @@ import { ZodParsedType } from './parser';
 import { ZodErrorMap } from './defaultErrorMap';
 import { ZodCodeGenerator } from './codegen';
 
-export type { ZodTypeDef };
+export type ZodTypeDef = ZodTypeDef;
 export { ZodTypes };
 
 const stringType = ZodString.create;
@@ -164,15 +164,28 @@ export {
   ZodCodeGenerator,
 };
 
-export type {
-  ZodType,
-  ZodType as Schema,
-  ZodType as ZodSchema,
-  ZodTypeAny,
-  ZodErrorMap,
-};
+export type ZodTypeZodType<
+  Output,
+  Def extends ZodTypeDef = ZodTypeDef,
+  Input = Output
+> = ZodType<Output, Def, Input>;
+export type Schema<
+  Output,
+  Def extends ZodTypeDef = ZodTypeDef,
+  Input = Output
+> = ZodType<Output, Def, Input>
+export type ZodSchema<
+  Output,
+  Def extends ZodTypeDef = ZodTypeDef,
+  Input = Output
+> = ZodType<Output, Def, Input>
+export type ZodTypeAny = ZodTypeAny;
+export type ZodErrorMap = ZodErrorMap;
 
-export type { TypeOf, TypeOf as infer, input, output };
+export type TypeOf<T extends ZodType<any>> = TypeOf<T extends ZodType<any>>;
+export type infer<T extends ZodType<any>> = TypeOf<T extends ZodType<any>>;
+export type input<T extends ZodType<any>> = input<T extends ZodType<any>>;
+export type ouput<T extends ZodType<any>> = ouput<T extends ZodType<any>>;
 
 export * from './ZodError';
 

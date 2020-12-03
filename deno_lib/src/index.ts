@@ -43,7 +43,7 @@ import { ZodParsedType } from './parser.ts';
 import { ZodErrorMap } from './defaultErrorMap.ts';
 import { ZodCodeGenerator } from './codegen.ts';
 
-export type { ZodTypeDef };
+export type ZodTypeDef = ZodTypeDef
 export { ZodTypes };
 
 const stringType = ZodString.create;
