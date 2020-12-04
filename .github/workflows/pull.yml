@@ -1,4 +1,4 @@
-name: Refresh
+name: Pull Upstream
 
 on:
   schedule:
@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  refresh:
+  pull:
     runs-on: Ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - run: |
-          set -vx
+          set -v
           declare origin_branch=trunk
           declare upstream_branch=v2
           exec 2>&1
