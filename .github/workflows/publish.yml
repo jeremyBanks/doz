@@ -34,3 +34,4 @@ jobs:
             git tag "${tag}"
             git push origin "${tag}"
           fi
+        continue-on-error: true
