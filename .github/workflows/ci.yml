@@ -45,7 +45,7 @@ jobs:
 
   autofix:
     needs: []
-    if: github.event_name == 'push'
+    if: github.event_name != 'pull_request'
     runs-on: Ubuntu-20.04
     name: ⚙️ Automatically Format and Build
     steps:
