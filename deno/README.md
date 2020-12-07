@@ -10,7 +10,7 @@ import z from "https://deno.land/x/doz/mod.ts";
 const Location = z.object({
   latitude: z.number(),
   longitude: z.number(),
-});
+}).strict();
 type Location = z.infer<typeof Location>;
 
 const destination: Location = Location.parse(JSON.parse(`{
@@ -40,3 +40,4 @@ error: Uncaught Error: [
 ## Known Issues
 
 - Zod is currently not compatible with `deno bundle` due to [a bug](https://github.com/swc-project/swc/issues/1254) in [SWC](https://swc.rs/), the bundler that Deno uses internally.
+
