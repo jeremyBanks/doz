@@ -588,14 +588,19 @@ export const ZodParser = (schema: z.ZodType<any>) => (
           continue;
         }
 
-        objectPromises[key] = new PseudoPromise().then(() => {
-          try {
+        objectPromises[key] = new PseudoPromise()
+          .then(() => {
+            // try {
             const parsedValue = keyValidator.parse(data[key], {
               ...params,
               path: [...params.path, key],
             });
             return parsedValue;
-          } catch (err) {
+            // } catch (err) {
+
+            // }
+          })
+          .catch(err => {
             if (err instanceof ZodError) {
               const zerr: ZodError = err;
               ERROR.addIssues(zerr.issues);
@@ -603,8 +608,7 @@ export const ZodParser = (schema: z.ZodType<any>) => (
             } else {
               throw err;
             }
-          }
-        });
+          });
       }
 
       if (def.catchall instanceof ZodNever) {
@@ -1163,7 +1167,6 @@ export const ZodParser = (schema: z.ZodType<any>) => (
   if (!ERROR.isEmpty) {
     THROW();
   }
-
   const customChecks = def.checks || [];
 
   const checkCtx: z.RefinementCtx = {
@@ -1172,8 +1175,22 @@ export const ZodParser = (schema: z.ZodType<any>) => (
     },
     path: params.path,
   };
+
   if (params.async === false) {
     const resolvedValue = PROMISE.getValueSync();
+
+    if (resolvedValue === INVALID && ERROR.isEmpty) {
+      ERROR.addIssue(
+        makeError(params, data, {
+          code: ZodIssueCode.custom,
+          message: 'Invalid',
+        }),
+      );
+    }
+
+    if (!ERROR.isEmpty) {
+      THROW();
+    }
 
     // const SYNC_ERROR =
     // "You can't use .parse on a schema containing async refinements or transformations. Use .parseAsync instead.";
@@ -1186,6 +1203,7 @@ export const ZodParser = (schema: z.ZodType<any>) => (
 
     for (const check of customChecks) {
       const checkResult = check.check(resolvedValue, checkCtx);
+
       if (checkResult instanceof Promise)
         throw new Error(
           "You can't use .parse on a schema containing async refinements. Use .parseAsync instead.",
@@ -1213,38 +1231,36 @@ export const ZodParser = (schema: z.ZodType<any>) => (
     const checker = async () => {
       let resolvedValue = await PROMISE.getValueAsync();
 
-      // if (resolvedValue !== INVALID) {
-      //   // let someError: boolean = false;
+      if (resolvedValue === INVALID && ERROR.isEmpty) {
+        // let someError: boolean = false;
+        ERROR.addIssue(
+          makeError(params, data, {
+            code: ZodIssueCode.custom,
+            message: 'Invalid',
+          }),
+        );
+      }
+      if (!ERROR.isEmpty) {
+        THROW();
+      }
 
-      // }
-      if (resolvedValue !== INVALID) {
-        if (params.runAsyncValidationsInSeries) {
-          let someError = false;
-          await customChecks.reduce((previousPromise, check) => {
-            return previousPromise.then(async () => {
-              if (!someError) {
-                const len = ERROR.issues.length;
-                await check.check(resolvedValue, checkCtx);
-                if (len < ERROR.issues.length) someError = true;
-              }
-            });
-          }, Promise.resolve());
-        } else {
-          await Promise.all(
-            customChecks.map(async check => {
+      if (params.runAsyncValidationsInSeries) {
+        let someError = false;
+        await customChecks.reduce((previousPromise, check) => {
+          return previousPromise.then(async () => {
+            if (!someError) {
+              const len = ERROR.issues.length;
               await check.check(resolvedValue, checkCtx);
-            }),
-          );
-        }
+              if (len < ERROR.issues.length) someError = true;
+            }
+          });
+        }, Promise.resolve());
       } else {
-        if (ERROR.isEmpty) {
-          ERROR.addIssue(
-            makeError(params, data, {
-              code: ZodIssueCode.custom,
-              message: 'Invalid',
-            }),
-          );
-        }
+        await Promise.all(
+          customChecks.map(async check => {
+            await check.check(resolvedValue, checkCtx);
+          }),
+        );
       }
 
       if (!ERROR.isEmpty) {
