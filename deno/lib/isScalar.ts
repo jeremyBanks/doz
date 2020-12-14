@@ -1,5 +1,5 @@
-import { util } from "./helpers/util.ts";
 import { ZodDef } from "./index.ts";
+import { util } from "./helpers/util.ts";
 import { ZodType, ZodTypes } from "./types/base.ts";
 
 export const isScalar = (

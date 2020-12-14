@@ -1,10 +1,10 @@
+import { ZodNever } from "../index.ts";
 // import { ZodUndefined } from './undefined';
 // import { ZodNull } from './null';
 // import { ZodUnion } from './union';
 import { objectUtil } from "../helpers/objectUtil.ts";
 import { partialUtil } from "../helpers/partialUtil.ts";
 import { Scalars } from "../helpers/primitive.ts";
-import { ZodNever } from "../index.ts";
 import { isScalar } from "../isScalar.ts";
 import * as z from "./base.ts";
 
