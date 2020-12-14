@@ -1,10 +1,10 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import { Mocker } from '../helpers/Mocker.ts';
+import { Mocker } from "../helpers/Mocker.ts";
 
-test('mocker', () => {
+test("mocker", () => {
   const mocker = new Mocker();
   mocker.string;
   mocker.number;

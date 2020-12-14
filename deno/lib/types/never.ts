@@ -1,4 +1,4 @@
-import * as z from './base.ts';
+import * as z from "./base.ts";
 
 export interface ZodNeverDef extends z.ZodTypeDef {
   t: z.ZodTypes.never;

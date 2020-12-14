@@ -3,5 +3,6 @@
   "compilerOptions": {
     "module": "esnext",
     "outDir": "./lib/esm"
-  }
+  },
+  "exclude": ["./src/**/__tests__", "./src/playground.ts"]
 }

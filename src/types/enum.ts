@@ -1,4 +1,4 @@
-import * as z from './base';
+import * as z from "./base";
 // import { ZodUndefined } from './undefined';
 // import { ZodNull } from './null';
 // import { ZodUnion } from './union';
@@ -57,7 +57,7 @@ export class ZodEnum<T extends [string, ...string[]]> extends z.ZodType<
   }
 
   static create = <U extends string, T extends [U, ...U[]]>(
-    values: T,
+    values: T
   ): ZodEnum<T> => {
     return new ZodEnum({
       t: z.ZodTypes.enum,

@@ -1,20 +1,20 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import * as z from '../index.ts';
-import { ZodError } from '../ZodError.ts';
-import { util } from '../helpers/util.ts';
+import { util } from "../helpers/util.ts";
+import * as z from "../index.ts";
+import { ZodError } from "../ZodError.ts";
 
 const testTuple = z.tuple([
   z.string(),
-  z.object({ name: z.literal('Rudy') }),
-  z.array(z.literal('blue')),
+  z.object({ name: z.literal("Rudy") }),
+  z.array(z.literal("blue")),
 ]);
-const testData = ['asdf', { name: 'Rudy' }, ['blue']];
-const badData = [123, { name: 'Rudy2' }, ['blue', 'red']];
+const testData = ["asdf", { name: "Rudy" }, ["blue"]];
+const badData = [123, { name: "Rudy2" }, ["blue", "red"]];
 
-test('tuple inference', () => {
+test("tuple inference", () => {
   const args1 = z.tuple([z.string()]);
   const returns1 = z.number();
   const func1 = z.function(args1, returns1);
@@ -23,19 +23,19 @@ test('tuple inference', () => {
   [t1];
 });
 
-test('successful validation', () => {
+test("successful validation", () => {
   const val = testTuple.parse(testData);
-  expect(val).toEqual(['asdf', { name: 'Rudy' }, ['blue']]);
+  expect(val).toEqual(["asdf", { name: "Rudy" }, ["blue"]]);
 });
 
-test('successful async validation', async () => {
+test("successful async validation", async () => {
   const val = await testTuple.parseAsync(testData);
   return expect(val).toEqual(testData);
 });
 
-test('failed validation', () => {
+test("failed validation", () => {
   const checker = () => {
-    testTuple.parse([123, { name: 'Rudy2' }, ['blue', 'red']] as any);
+    testTuple.parse([123, { name: "Rudy2" }, ["blue", "red"]] as any);
   };
   try {
     checker();
@@ -46,7 +46,7 @@ test('failed validation', () => {
   }
 });
 
-test('failed async validation', async () => {
+test("failed async validation", async () => {
   const res = await testTuple.safeParse(badData);
   expect(res.success).toEqual(false);
   if (!res.success) {
@@ -61,19 +61,19 @@ test('failed async validation', async () => {
   // }
 });
 
-test('tuple with transformers', () => {
-  const stringToNumber = z.string().transform(z.number(), val => val.length);
-  const val = z.tuple([stringToNumber]);
+// test("tuple with transformers", () => {
+//   const stringToNumber = z.string().transform(z.number(), (val) => val.length);
+//   const val = z.tuple([stringToNumber]);
 
-  type t1 = z.input<typeof val>;
-  const f1: util.AssertEqual<t1, [string]> = true;
-  //  const f1: util.AssertEqual<t1, [string]> =
-  type t2 = z.output<typeof val>;
-  const f2: util.AssertEqual<t2, [number]> = true;
+//   type t1 = z.input<typeof val>;
+//   const f1: util.AssertEqual<t1, [string]> = true;
+//   //  const f1: util.AssertEqual<t1, [string]> =
+//   type t2 = z.output<typeof val>;
+//   const f2: util.AssertEqual<t2, [number]> = true;
 
-  f1;
-  f2;
-});
+//   f1;
+//   f2;
+// });
 
 // test('tuple with optional elements', () => {
 //   const result = z

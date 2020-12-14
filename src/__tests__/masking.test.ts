@@ -1,11 +1,11 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-import * as z from '..';
+import * as z from "..";
 
-test('masking test', () => {});
+test("masking test", () => {});
 
-test('require', () => {
+test("require", () => {
   const baseSchema = z.object({
     firstName: z.string(),
     middleName: z.string().optional(),

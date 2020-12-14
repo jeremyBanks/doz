@@ -1,17 +1,9 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es5",
-      "es6",
-      "es7",
-      "esnext",
-      "dom"
-    ],
+    "lib": ["es5", "es6", "es7", "esnext", "dom"],
     "target": "es5",
     "removeComments": true,
-    "module": "commonjs",
     "declaration": true,
-    "outDir": "./lib/cjs",
     "esModuleInterop": true,
     "sourceMap": true,
     "moduleResolution": "node",
@@ -26,7 +18,5 @@
     "downlevelIteration": true,
     "isolatedModules": true
   },
-  "include": [
-    "./src/**/*",
-  ],
+  "include": ["./src/**/*", "./.eslintrc.js"]
 }

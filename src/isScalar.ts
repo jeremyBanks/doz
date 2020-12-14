@@ -1,10 +1,10 @@
-import { ZodDef } from '.';
-import { util } from './helpers/util';
-import { ZodType, ZodTypes } from './types/base';
+import { ZodDef } from ".";
+import { util } from "./helpers/util";
+import { ZodType, ZodTypes } from "./types/base";
 
 export const isScalar = (
   schema: ZodType<any, any>,
-  params: { root: boolean } = { root: true },
+  params: { root: boolean } = { root: true }
 ): boolean => {
   const def = schema._def as ZodDef;
 
@@ -48,13 +48,13 @@ export const isScalar = (
       returnValue = false;
       break;
     case ZodTypes.union:
-      returnValue = def.options.every(x => isScalar(x));
+      returnValue = def.options.every((x) => isScalar(x));
       break;
     case ZodTypes.intersection:
       returnValue = isScalar(def.left) && isScalar(def.right);
       break;
     case ZodTypes.tuple:
-      returnValue = def.items.every(x => isScalar(x, { root: false }));
+      returnValue = def.items.every((x) => isScalar(x, { root: false }));
       break;
     case ZodTypes.lazy:
       returnValue = isScalar(def.getter());
@@ -83,10 +83,10 @@ export const isScalar = (
     case ZodTypes.promise:
       returnValue = false;
       break;
-    case ZodTypes.transformer:
-      returnValue = isScalar(def.output);
-      break;
 
+    case ZodTypes.transformer:
+      returnValue = isScalar(def.schema);
+      break;
     case ZodTypes.optional:
       returnValue = isScalar(def.innerType);
       break;

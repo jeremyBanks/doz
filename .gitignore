@@ -1,10 +1,6 @@
-package-lock.json
-*.log
-.DS_Store
 **/.DS_Store
 node_modules
 /lib
-/coverage
-src/coverage/*
+coverage
 .vscode
 *.log

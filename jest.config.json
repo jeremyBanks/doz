@@ -1,22 +1,11 @@
 {
-  "rootDir": "src",
+  "rootDir": ".",
   "transform": {
     "^.+\\.tsx?$": "ts-jest"
   },
-  "testRegex": "(__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-  "moduleFileExtensions": [
-    "ts",
-    "tsx",
-    "js",
-    "jsx",
-    "json",
-    "node"
-  ],
-  "coverageReporters": [
-    "json-summary",
-    "text",
-    "lcov"
-  ],
+  "testRegex": ".*\\.test\\.ts$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "coverageReporters": ["json-summary", "text", "lcov"],
   "globals": {
     "ts-jest": {
       "tsconfig": "tsconfig.json"

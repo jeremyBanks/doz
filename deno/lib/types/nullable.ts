@@ -1,4 +1,4 @@
-import * as z from './base.ts';
+import * as z from "./base.ts";
 
 export interface ZodNullableDef<T extends z.ZodTypeAny = z.ZodTypeAny>
   extends z.ZodTypeDef {
@@ -16,9 +16,9 @@ export class ZodNullable<
   //  Output extends T['_output'] | null = T['_output'] | null,
   //  Input extends T['_input'] | null = T['_input'] | null
 > extends z.ZodType<
-  T['_output'] | null,
+  T["_output"] | null,
   ZodNullableDef<T>,
-  T['_input'] | null
+  T["_input"] | null
 > {
   // An nullable nullable is the original nullable
   // nullable: () => ZodNullableType<this> = () => this as ZodNullableType<this>;

@@ -7,6 +7,7 @@
 <a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://img.shields.io/github/license/colinhacks/zod" alt="License"></a>
 <a href="https://www.npmjs.com/package/zod" rel="nofollow"><img src="https://img.shields.io/npm/dw/zod.svg" alt="npm"></a>
 <a href="https://www.npmjs.com/package/zod" rel="nofollow"><img src="https://img.shields.io/github/stars/colinhacks/zod" alt="stars"></a>
+<a href="./src/__tests__" rel="nofollow"><img src="./coverage.svg" alt="coverage"></a>
 
 </p>
 <p align="center">
@@ -176,7 +177,8 @@ npm install zod
 
 #### TypeScript requirements
 
-- Zod 2.x requires TypeScript 3.8+
+- Zod 3.x requires TypeScript 3.8+
+- Zod 2.x requires TypeScript 3.7+
 - Zod 1.x requires TypeScript 3.3+
 
 > Support for TS 3.2 was dropped with the release of zod@1.10 on 19 July 2020
@@ -514,10 +516,10 @@ const dogSchema = z.object({
 });
 
 type Dog = z.infer<typeof dogSchema>;
-/*
+/* 
 equivalent to:
-type Dog = {
-  name: string;
+type Dog = { 
+  name: string; 
   age: number;
 }
 */
@@ -672,7 +674,7 @@ We can create a partial version:
 ```ts
 const partialUser = user.partial();
 /*
-{
+{ 
   username?: string | undefined,
   location?: {
     city: number;
@@ -693,9 +695,9 @@ Or you can use `.deepPartial` :
 ```ts
 const deepPartialUser = user.deepPartial();
 
-/*
+/* 
 {
-  username?: string | undefined,
+  username?: string | undefined, 
   location?: {
     latitude?: number | undefined;
     longitude?: number | undefined;
@@ -1098,12 +1100,12 @@ To get autocompletion with a Zod enum, use the `.enum` property of your schema:
 FishEnum.enum.Salmon; // => autocompletes
 
 FishEnum.enum;
-/*
+/* 
 => {
   Salmon: "Salmon",
   Tuna: "Tuna",
   Trout: "Trout",
-}
+} 
 */
 ```
 

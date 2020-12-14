@@ -2,7 +2,7 @@ name: Pull Upstream
 
 on:
   schedule:
-    - cron: '33 3 * * *'
+    - cron: '22 2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - run: |
           set -v
           declare origin_branch=trunk
-          declare upstream_branch=v2
+          declare upstream_branch=v3
           exec 2>&1
 
           declare author_name="$(git log -1 --pretty=format:'%an')"

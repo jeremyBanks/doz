@@ -1,11 +1,11 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-// import * as z from '../index';
+import * as z from "../index.ts";
 
-test('dummy test deepmasking', () => {
-  expect(true).toBeTruthy();
+test("test", () => {
+  z;
 });
 
 // const fish = z.object({
@@ -78,7 +78,7 @@ test('dummy test deepmasking', () => {
 //   const f10 = nonStrict.pick({ name: true });
 //   f10.parse({ name: 'a' });
 //   const val = f10.parse({ name: 'a', color: 'b' });
-//   expect(val).toStrictEqual({ name: 'a' });
+//   expect(val).toEqual({ name: 'a' });
 // });
 // test('f12', () => {
 //   const badfcheck12 = () => nonStrict.omit({ color: true, asdf: true });

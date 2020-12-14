@@ -1,7 +1,7 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-import * as z from '../index';
+import * as z from "../index";
 
 function checkErrors(a: z.ZodTypeAny, bad: any) {
   let expected;
@@ -17,12 +17,12 @@ function checkErrors(a: z.ZodTypeAny, bad: any) {
   }
 }
 
-test('Should have error messages appropriate for the underlying type', () => {
+test("Should have error messages appropriate for the underlying type", () => {
   checkErrors(z.string().min(2), 1);
   z.string().min(2).optional().parse(undefined);
   checkErrors(z.number().min(2), 1);
   z.number().min(2).optional().parse(undefined);
-  checkErrors(z.boolean(), '');
+  checkErrors(z.boolean(), "");
   z.boolean().optional().parse(undefined);
   checkErrors(z.undefined(), null);
   z.undefined().optional().parse(undefined);

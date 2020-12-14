@@ -1,8 +1,8 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-import * as z from '../index';
-import { util } from '../helpers/util';
+import { util } from "../helpers/util";
+import * as z from "../index";
 
 const Test = z.object({
   f1: z.number(),
@@ -12,7 +12,7 @@ const Test = z.object({
 });
 type Test = z.infer<typeof Test>;
 
-test('object type inference', () => {
+test("object type inference", () => {
   type TestType = {
     f1: number;
     f2?: string | undefined;
@@ -24,19 +24,19 @@ test('object type inference', () => {
   [t1];
 });
 
-test('unknown throw', () => {
+test("unknown throw", () => {
   const asdf: unknown = 35;
   expect(() => Test.parse(asdf)).toThrow();
 });
 
-test('correct parsing', () => {
+test("correct parsing", () => {
   Test.parse({
     f1: 12,
-    f2: 'string',
-    f3: 'string',
+    f2: "string",
+    f3: "string",
     f4: [
       {
-        t: 'string',
+        t: "string",
       },
     ],
   });
@@ -52,11 +52,11 @@ test('correct parsing', () => {
   });
 });
 
-test('incorrect #1', () => {
+test("incorrect #1", () => {
   expect(() => Test.parse({} as any)).toThrow();
 });
 
-test('inference', () => {
+test("inference", () => {
   const t1 = z.object({
     name: z.string(),
     obj: z.object({}),
@@ -73,29 +73,29 @@ test('inference', () => {
 
   expect(f1).toBeTruthy();
   expect(f2).toBeTruthy();
-  i1.parse({ name: 'name' });
-  i2.parse({ obj: {}, arrayarray: [['asdf']] });
+  i1.parse({ name: "name" });
+  i2.parse({ obj: {}, arrayarray: [["asdf"]] });
   expect(() => i1.parse({} as any)).toThrow();
 });
 
-test('nonstrict by default', () => {
+test("nonstrict by default", () => {
   z.object({ points: z.number() }).parse({
     points: 2314,
-    unknown: 'asdf',
+    unknown: "asdf",
   });
 });
 
 const data = {
   points: 2314,
-  unknown: 'asdf',
+  unknown: "asdf",
 };
 
-test('strip by default', () => {
+test("strip by default", () => {
   const val = z.object({ points: z.number() }).parse(data);
   expect(val).toEqual({ points: 2314 });
 });
 
-test('unknownkeys override', () => {
+test("unknownkeys override", () => {
   const val = z
     .object({ points: z.number() })
     .strict()
@@ -107,25 +107,25 @@ test('unknownkeys override', () => {
   expect(val).toEqual(data);
 });
 
-test('passthrough unknown', () => {
+test("passthrough unknown", () => {
   const val = z.object({ points: z.number() }).passthrough().parse(data);
 
   expect(val).toEqual(data);
 });
 
-test('strip unknown', () => {
+test("strip unknown", () => {
   const val = z.object({ points: z.number() }).strip().parse(data);
 
   expect(val).toEqual({ points: 2314 });
 });
 
-test('strict', () => {
+test("strict", () => {
   const val = z.object({ points: z.number() }).strict().safeParse(data);
 
   expect(val.success).toEqual(false);
 });
 
-test('primitives', () => {
+test("primitives", () => {
   const baseObj = z.object({
     stringPrimitive: z.string(),
     stringArrayPrimitive: z.array(z.string()),
@@ -140,8 +140,8 @@ test('primitives', () => {
     primitiveUnion: z.union([z.string(), z.number()]),
     primitiveIntersection: z.intersection(z.string(), z.string()),
     lazyPrimitive: z.lazy(() => z.string()),
-    literalPrimitive: z.literal('sup'),
-    enumPrimitive: z.enum(['asdf', 'qwer']),
+    literalPrimitive: z.literal("sup"),
+    enumPrimitive: z.enum(["asdf", "qwer"]),
     datePrimitive: z.date(),
     primitiveTuple: z.tuple([z.string(), z.number()]),
 
@@ -153,49 +153,49 @@ test('primitives', () => {
   });
 
   expect(Object.keys(baseObj.primitives().shape)).toEqual([
-    'stringPrimitive',
-    'stringArrayPrimitive',
-    'numberPrimitive',
-    'numberArrayPrimitive',
-    'booleanPrimitive',
-    'booleanArrayPrimitive',
-    'bigintPrimitive',
-    'bigintArrayPrimitive',
-    'undefinedPrimitive',
-    'nullPrimitive',
-    'primitiveUnion',
-    'primitiveIntersection',
-    'lazyPrimitive',
-    'literalPrimitive',
-    'enumPrimitive',
-    'datePrimitive',
-    'primitiveTuple',
+    "stringPrimitive",
+    "stringArrayPrimitive",
+    "numberPrimitive",
+    "numberArrayPrimitive",
+    "booleanPrimitive",
+    "booleanArrayPrimitive",
+    "bigintPrimitive",
+    "bigintArrayPrimitive",
+    "undefinedPrimitive",
+    "nullPrimitive",
+    "primitiveUnion",
+    "primitiveIntersection",
+    "lazyPrimitive",
+    "literalPrimitive",
+    "enumPrimitive",
+    "datePrimitive",
+    "primitiveTuple",
   ]);
 
   expect(Object.keys(baseObj.nonprimitives().shape)).toEqual([
-    'nonprimitiveUnion',
-    'object',
-    'objectArray',
-    'arrayarray',
-    'nonprimitiveTuple',
+    "nonprimitiveUnion",
+    "object",
+    "objectArray",
+    "arrayarray",
+    "nonprimitiveTuple",
   ]);
 });
 
-test('catchall inference', () => {
+test("catchall inference", () => {
   const o1 = z
     .object({
       first: z.string(),
     })
     .catchall(z.number());
 
-  const d1 = o1.parse({ first: 'asdf', num: 1243 });
-  const f1: util.AssertEqual<number, typeof d1['asdf']> = true;
-  const f2: util.AssertEqual<string, typeof d1['first']> = true;
+  const d1 = o1.parse({ first: "asdf", num: 1243 });
+  const f1: util.AssertEqual<number, typeof d1["asdf"]> = true;
+  const f2: util.AssertEqual<string, typeof d1["first"]> = true;
   f1;
   f2;
 });
 
-test('catchall overrides strict', () => {
+test("catchall overrides strict", () => {
   const o1 = z
     .object({ first: z.string().optional() })
     .strict()
@@ -210,12 +210,12 @@ test('catchall overrides strict', () => {
   // should only run catchall validation
   // against unknown keys
   o1.parse({
-    first: 'asdf',
+    first: "asdf",
     asdf: 1234,
   });
 });
 
-test('catchall overrides strict', () => {
+test("catchall overrides strict", () => {
   const o1 = z
     .object({
       first: z.string(),
@@ -226,36 +226,61 @@ test('catchall overrides strict', () => {
   // should run fine
   // setting a catchall overrides the unknownKeys behavior
   o1.parse({
-    first: 'asdf',
+    first: "asdf",
     asdf: 1234,
   });
 });
 
-test('test that optional keys are unset', async () => {
+test("test that optional keys are unset", async () => {
   const SNamedEntity = z.object({
     id: z.string(),
     set: z.string().optional(),
     unset: z.string().optional(),
   });
   const result = await SNamedEntity.parse({
-    id: 'asdf',
+    id: "asdf",
     set: undefined,
   });
-  expect(Object.keys(result)).toEqual(['id', 'set']);
+  expect(Object.keys(result)).toEqual(["id", "set"]);
 });
 
-test('test catchall parsing', async () => {
+test("test catchall parsing", async () => {
   const result = z
     .object({ name: z.string() })
     .catchall(z.number())
-    .parse({ name: 'Foo', validExtraKey: 61 });
+    .parse({ name: "Foo", validExtraKey: 61 });
 
-  expect(result).toEqual({ name: 'Foo', validExtraKey: 61 });
+  expect(result).toEqual({ name: "Foo", validExtraKey: 61 });
 
   const result2 = z
     .object({ name: z.string() })
     .catchall(z.number())
-    .safeParse({ name: 'Foo', validExtraKey: 61, invalid: 'asdf' });
+    .safeParse({ name: "Foo", validExtraKey: 61, invalid: "asdf" });
 
   expect(result2.success).toEqual(false);
+});
+
+test("test nonexistent keys", async () => {
+  const Schema = z.union([
+    z.object({ a: z.string() }),
+    z.object({ b: z.number() }),
+  ]);
+  const obj = { a: "A" };
+  const result = await Schema.spa(obj); // Works with 1.11.10, breaks with 2.0.0-beta.21
+  expect(result.success).toBe(true);
+});
+
+test("test async PseudoPromise.all", async () => {
+  const Schema2 = z.union([
+    z.object({
+      ty: z.string(),
+    }),
+    z.object({
+      ty: z.number(),
+    }),
+  ]);
+
+  const obj = { ty: "A" };
+  const result = await Schema2.spa(obj); // Works with 1.11.10, breaks with 2.0.0-beta.21
+  expect(result.success).toEqual(true);
 });

@@ -1,25 +1,25 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import * as z from '../index.ts';
-import { util } from '../helpers/util.ts';
+import { util } from "../helpers/util.ts";
+import * as z from "../index.ts";
 
 const booleanRecord = z.record(z.boolean());
 type booleanRecord = z.infer<typeof booleanRecord>;
 
-test('type inference', () => {
+test("type inference", () => {
   const f1: util.AssertEqual<booleanRecord, Record<string, boolean>> = true;
   f1;
 });
 
-test('methods', () => {
+test("methods", () => {
   booleanRecord.toJSON();
   booleanRecord.optional();
   booleanRecord.nullable();
 });
 
-test('string record parse - pass', () => {
+test("string record parse - pass", () => {
   booleanRecord.parse({
     k1: true,
     k2: false,
@@ -27,17 +27,17 @@ test('string record parse - pass', () => {
   });
 });
 
-test('string record parse - fail', () => {
+test("string record parse - fail", () => {
   const badCheck = () =>
     booleanRecord.parse({
       asdf: 1234,
     } as any);
   expect(badCheck).toThrow();
 
-  expect(() => booleanRecord.parse('asdf')).toThrow();
+  expect(() => booleanRecord.parse("asdf")).toThrow();
 });
 
-test('string record parse - fail', () => {
+test("string record parse - fail", () => {
   const badCheck = () =>
     booleanRecord.parse({
       asdf: {},
@@ -45,7 +45,7 @@ test('string record parse - fail', () => {
   expect(badCheck).toThrow();
 });
 
-test('string record parse - fail', () => {
+test("string record parse - fail", () => {
   const badCheck = () =>
     booleanRecord.parse({
       asdf: [],

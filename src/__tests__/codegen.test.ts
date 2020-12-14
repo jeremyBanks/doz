@@ -1,10 +1,10 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-import * as z from '../index';
-import { crazySchema } from '../crazySchema';
+import { crazySchema } from "../crazySchema";
+import * as z from "../index";
 
-test('ZodCodeGenerator', () => {
+test("ZodCodeGenerator", () => {
   const gen = new z.ZodCodeGenerator();
   gen.generate(crazySchema);
   gen.dump();

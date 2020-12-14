@@ -1,12 +1,12 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import * as z from '../index.ts';
+import * as z from "../index.ts";
 
-test('masking test', () => {});
+test("masking test", () => {});
 
-test('require', () => {
+test("require", () => {
   const baseSchema = z.object({
     firstName: z.string(),
     middleName: z.string().optional(),

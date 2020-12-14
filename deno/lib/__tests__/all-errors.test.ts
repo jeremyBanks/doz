@@ -1,10 +1,10 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import * as z from '../index.ts';
+import * as z from "../index.ts";
 
-test('all errors', () => {
+test("all errors", () => {
   const propertySchema = z.string();
   const schema = z.object({
     a: propertySchema,
@@ -20,8 +20,8 @@ test('all errors', () => {
     expect(error.flatten()).toEqual({
       formErrors: [],
       fieldErrors: {
-        a: ['Expected string, received null'],
-        b: ['Expected string, received null'],
+        a: ["Expected string, received null"],
+        b: ["Expected string, received null"],
       },
     });
   }

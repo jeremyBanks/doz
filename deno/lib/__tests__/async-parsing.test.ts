@@ -1,19 +1,13 @@
 // @ts-ignore TS6133
-import { expect } from 'https://deno.land/x/expect@v0.2.6/mod.ts';
+import { expect } from "https://deno.land/x/expect@v0.2.6/mod.ts";
 const test = Deno.test;
 
-import * as z from '../index.ts';
-
-const stringToNumber = z.transformer(
-  z.string(),
-  z.number(),
-  v => v.length + 10,
-);
+import * as z from "../index.ts";
 
 /// string
 const stringSchema = z.string();
-test('string async parse', async () => {
-  const goodData = 'XXX';
+test("string async parse", async () => {
+  const goodData = "XXX";
   const badData = 12;
 
   const goodResult = await stringSchema.safeParseAsync(goodData);
@@ -27,9 +21,9 @@ test('string async parse', async () => {
 
 /// number
 const numberSchema = z.number();
-test('number async parse', async () => {
+test("number async parse", async () => {
   const goodData = 1234.2353;
-  const badData = '1234';
+  const badData = "1234";
 
   const goodResult = await numberSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -42,7 +36,7 @@ test('number async parse', async () => {
 
 /// bigInt
 const bigIntSchema = z.bigint();
-test('bigInt async parse', async () => {
+test("bigInt async parse", async () => {
   const goodData = BigInt(145);
   const badData = 134;
 
@@ -57,7 +51,7 @@ test('bigInt async parse', async () => {
 
 /// boolean
 const booleanSchema = z.boolean();
-test('boolean async parse', async () => {
+test("boolean async parse", async () => {
   const goodData = true;
   const badData = 1;
 
@@ -72,7 +66,7 @@ test('boolean async parse', async () => {
 
 /// date
 const dateSchema = z.date();
-test('date async parse', async () => {
+test("date async parse", async () => {
   const goodData = new Date();
   const badData = new Date().toISOString();
 
@@ -87,9 +81,9 @@ test('date async parse', async () => {
 
 /// undefined
 const undefinedSchema = z.undefined();
-test('undefined async parse', async () => {
+test("undefined async parse", async () => {
   const goodData = undefined;
-  const badData = 'XXX';
+  const badData = "XXX";
 
   const goodResult = await undefinedSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -102,7 +96,7 @@ test('undefined async parse', async () => {
 
 /// null
 const nullSchema = z.null();
-test('null async parse', async () => {
+test("null async parse", async () => {
   const goodData = null;
   const badData = undefined;
 
@@ -117,7 +111,7 @@ test('null async parse', async () => {
 
 /// any
 const anySchema = z.any();
-test('any async parse', async () => {
+test("any async parse", async () => {
   const goodData = [{}];
   // const badData = 'XXX';
 
@@ -132,8 +126,8 @@ test('any async parse', async () => {
 
 /// unknown
 const unknownSchema = z.unknown();
-test('unknown async parse', async () => {
-  const goodData = ['asdf', 124, () => {}];
+test("unknown async parse", async () => {
+  const goodData = ["asdf", 124, () => {}];
   // const badData = 'XXX';
 
   const goodResult = await unknownSchema.safeParseAsync(goodData);
@@ -147,7 +141,7 @@ test('unknown async parse', async () => {
 
 /// void
 const voidSchema = z.void();
-test('void async parse', async () => {
+test("void async parse", async () => {
   const goodData = undefined;
   const badData = 0;
 
@@ -162,9 +156,9 @@ test('void async parse', async () => {
 
 /// array
 const arraySchema = z.array(z.string());
-test('array async parse', async () => {
-  const goodData = ['XXX'];
-  const badData = 'XXX';
+test("array async parse", async () => {
+  const goodData = ["XXX"];
+  const badData = "XXX";
 
   const goodResult = await arraySchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -177,8 +171,8 @@ test('array async parse', async () => {
 
 /// object
 const objectSchema = z.object({ string: z.string() });
-test('object async parse', async () => {
-  const goodData = { string: 'XXX' };
+test("object async parse", async () => {
+  const goodData = { string: "XXX" };
   const badData = { string: 12 };
 
   const goodResult = await objectSchema.safeParseAsync(goodData);
@@ -192,7 +186,7 @@ test('object async parse', async () => {
 
 /// union
 const unionSchema = z.union([z.string(), z.undefined()]);
-test('union async parse', async () => {
+test("union async parse", async () => {
   const goodData = undefined;
   const badData = null;
 
@@ -205,39 +199,30 @@ test('union async parse', async () => {
   if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
 });
 
-/// intersection
-// const intersectionSchema = z.intersection();
-// test('intersection async parse', async () => {
-//   const goodData = 'XXX';
-//   const badData = 'XXX';
+/// tuple
+// const stringToNumber = z.transformer(
+//   z.string(),
+//   z.number(),
+//   (v) => v.length + 10
+// );
 
-//   const goodResult = await intersectionSchema.safeParseAsync(goodData);
+// const tupleSchema = z.tuple([stringToNumber, z.object({})]);
+// test("tuple async parse", async () => {
+//   const goodData = ["XXX", {}];
+//   const badData = [12, {}];
+
+//   const goodResult = await tupleSchema.safeParseAsync(goodData);
 //   expect(goodResult.success).toBe(true);
-//   if (goodResult.success) expect(goodResult.data).toEqual(goodData);
+//   if (goodResult.success) expect(goodResult.data).toEqual([13, {}]);
 
-//   const badResult = await intersectionSchema.safeParseAsync(badData);
+//   const badResult = await tupleSchema.safeParseAsync(badData);
 //   expect(badResult.success).toBe(false);
 //   if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
 // });
 
-/// tuple
-const tupleSchema = z.tuple([stringToNumber, z.object({})]);
-test('tuple async parse', async () => {
-  const goodData = ['XXX', {}];
-  const badData = [12, {}];
-
-  const goodResult = await tupleSchema.safeParseAsync(goodData);
-  expect(goodResult.success).toBe(true);
-  if (goodResult.success) expect(goodResult.data).toEqual([13, {}]);
-
-  const badResult = await tupleSchema.safeParseAsync(badData);
-  expect(badResult.success).toBe(false);
-  if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
-});
-
 /// record
 const recordSchema = z.record(z.object({}));
-test('record async parse', async () => {
+test("record async parse", async () => {
   const goodData = { adsf: {}, asdf: {} };
   const badData = [{}];
 
@@ -252,39 +237,24 @@ test('record async parse', async () => {
 
 /// function
 const functionSchema = z.function();
-test('function async parse', async () => {
+test("function async parse", async () => {
   const goodData = () => {};
-  const badData = 'XXX';
+  const badData = "XXX";
 
   const goodResult = await functionSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
-  if (goodResult.success) expect(typeof goodResult.data).toEqual('function');
+  if (goodResult.success) expect(typeof goodResult.data).toEqual("function");
 
   const badResult = await functionSchema.safeParseAsync(badData);
   expect(badResult.success).toBe(false);
   if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
 });
 
-/// lazy
-// const lazySchema = z.lazy();
-// test('lazy async parse', async () => {
-//   const goodData = 'XXX';
-//   const badData = 'XXX';
-
-//   const goodResult = await lazySchema.safeParseAsync(goodData);
-//   expect(goodResult.success).toBe(true);
-//   if (goodResult.success) expect(goodResult.data).toEqual(goodData);
-
-//   const badResult = await lazySchema.safeParseAsync(badData);
-//   expect(badResult.success).toBe(false);
-//   if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
-// });
-
 /// literal
-const literalSchema = z.literal('asdf');
-test('literal async parse', async () => {
-  const goodData = 'asdf';
-  const badData = 'asdff';
+const literalSchema = z.literal("asdf");
+test("literal async parse", async () => {
+  const goodData = "asdf";
+  const badData = "asdff";
 
   const goodResult = await literalSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -296,10 +266,10 @@ test('literal async parse', async () => {
 });
 
 /// enum
-const enumSchema = z.enum(['fish', 'whale']);
-test('enum async parse', async () => {
-  const goodData = 'whale';
-  const badData = 'leopard';
+const enumSchema = z.enum(["fish", "whale"]);
+test("enum async parse", async () => {
+  const goodData = "whale";
+  const badData = "leopard";
 
   const goodResult = await enumSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -312,13 +282,13 @@ test('enum async parse', async () => {
 
 /// nativeEnum
 enum nativeEnumTest {
-  asdf = 'qwer',
+  asdf = "qwer",
 }
 // @ts-ignore
 const nativeEnumSchema = z.nativeEnum(nativeEnumTest);
-test('nativeEnum async parse', async () => {
+test("nativeEnum async parse", async () => {
   const goodData = nativeEnumTest.asdf;
-  const badData = 'asdf';
+  const badData = "asdf";
 
   const goodResult = await nativeEnumSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -331,9 +301,9 @@ test('nativeEnum async parse', async () => {
 
 /// promise
 const promiseSchema = z.promise(z.number());
-test('promise async parse', async () => {
+test("promise async parse", async () => {
   const goodData = Promise.resolve(123);
-  const badData = Promise.resolve('XXX');
+  const badData = Promise.resolve("XXX");
 
   const goodResult = await promiseSchema.safeParseAsync(goodData);
   expect(goodResult.success).toBe(true);
@@ -345,59 +315,59 @@ test('promise async parse', async () => {
 });
 
 /// transformer
-const transformerSchema = z.transformer(
-  z.number(),
-  z.string(),
-  async val => `${Math.pow(val, 2)}`,
-);
-test('transformer async parse', async () => {
-  const goodData = 5;
-  const badData = '5';
+// const transformerSchema = z.transformer(
+//   z.number(),
+//   z.string(),
+//   async (val) => `${Math.pow(val, 2)}`
+// );
+// test("transformer async parse", async () => {
+//   const goodData = 5;
+//   const badData = "5";
 
-  const goodResult = await transformerSchema.safeParseAsync(goodData);
-  expect(goodResult.success).toBe(true);
-  if (goodResult.success) expect(goodResult.data).toEqual('25');
+//   const goodResult = await transformerSchema.safeParseAsync(goodData);
+//   expect(goodResult.success).toBe(true);
+//   if (goodResult.success) expect(goodResult.data).toEqual("25");
 
-  const badResult = await transformerSchema.safeParseAsync(badData);
-  expect(badResult.success).toBe(false);
-  if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
-});
+//   const badResult = await transformerSchema.safeParseAsync(badData);
+//   expect(badResult.success).toBe(false);
+//   if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);
+// });
 
-test('async validation non-empty strings', async () => {
+test("async validation non-empty strings", async () => {
   const base = z.object({
-    hello: z.string().refine(x => x && x.length > 0),
-    foo: z.string().refine(x => x && x.length > 0),
+    hello: z.string().refine((x) => x && x.length > 0),
+    foo: z.string().refine((x) => x && x.length > 0),
   });
 
-  const testval = { hello: '', foo: '' };
+  const testval = { hello: "", foo: "" };
   const result1 = base.safeParse(testval);
   const result2 = base.safeParseAsync(testval);
 
   const r1 = result1;
-  return result2.then(r2 => {
+  await result2.then((r2) => {
     if (r1.success === false && r2.success === false)
       expect(r1.error.issues.length).toBe(r2.error.issues.length); // <--- r1 has length 2, r2 has length 1
   });
 });
 
-test('async validation multiple errors 1', async () => {
+test("async validation multiple errors 1", async () => {
   const base = z.object({
     hello: z.string(),
     foo: z.number(),
   });
 
-  const testval = { hello: 3, foo: 'hello' };
+  const testval = { hello: 3, foo: "hello" };
   const result1 = base.safeParse(testval);
   const result2 = base.safeParseAsync(testval);
 
   const r1 = result1;
-  return result2.then(r2 => {
+  await result2.then((r2) => {
     if (r1.success === false && r2.success === false)
       expect(r2.error.issues.length).toBe(r1.error.issues.length);
   });
 });
 
-test('async validation multiple errors 2', async () => {
+test("async validation multiple errors 2", async () => {
   const base = (is_async?: boolean) =>
     z.object({
       hello: z.string(),
@@ -411,13 +381,13 @@ test('async validation multiple errors 2', async () => {
   const result2 = base(true).safeParseAsync(testval);
 
   const r1 = result1;
-  return result2.then(r2 => {
+  await result2.then((r2) => {
     if (r1.success === false && r2.success === false)
       expect(r2.error.issues.length).toBe(r1.error.issues.length);
   });
 });
 
-test('ensure early async failure prevents follow-up refinement checks', async () => {
+test("ensure early async failure prevents follow-up refinement checks", async () => {
   let count = 0;
   const base = z.object({
     hello: z.string(),
@@ -433,10 +403,10 @@ test('ensure early async failure prevents follow-up refinement checks', async ()
       }),
   });
 
-  const testval = { hello: 'bye', foo: 3 };
+  const testval = { hello: "bye", foo: 3 };
   const result = base.safeParseAsync(testval);
 
-  return result.then(r => {
+  await result.then((r) => {
     if (r.success === false) expect(r.error.issues.length).toBe(1);
     expect(count).toBe(2);
   });

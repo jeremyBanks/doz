@@ -1,6 +1,6 @@
-import { ZodRawShape, ZodTypes } from '../types/base.ts';
-import { ZodIntersection } from '../types/intersection.ts';
-import { ZodObject, AnyZodObject } from '../types/object.ts';
+import { ZodRawShape, ZodTypes } from "../types/base.ts";
+import { ZodIntersection } from "../types/intersection.ts";
+import { AnyZodObject, ZodObject } from "../types/object.ts";
 
 export namespace objectUtil {
   // export interface ZodObjectParams {
@@ -85,11 +85,11 @@ export namespace objectUtil {
 
   export const mergeShapes = <U extends ZodRawShape, T extends ZodRawShape>(
     first: U,
-    second: T,
+    second: T
   ): T & U => {
     const firstKeys = Object.keys(first);
     const secondKeys = Object.keys(second);
-    const sharedKeys = firstKeys.filter(k => secondKeys.indexOf(k) !== -1);
+    const sharedKeys = firstKeys.filter((k) => secondKeys.indexOf(k) !== -1);
 
     const sharedShape: any = {};
     for (const k of sharedKeys) {
@@ -105,11 +105,11 @@ export namespace objectUtil {
   export const mergeObjects = <First extends AnyZodObject>(first: First) => <
     Second extends AnyZodObject
   >(
-    second: Second,
+    second: Second
   ): ZodObject<
-    First['_shape'] & Second['_shape'],
-    First['_unknownKeys'],
-    First['_catchall']
+    First["_shape"] & Second["_shape"],
+    First["_unknownKeys"],
+    First["_catchall"]
     // MergeObjectParams<First['_params'], Second['_params']>,
     // First['_input'] & Second['_input'],
     // First['_output'] & Second['_output']
@@ -117,7 +117,7 @@ export namespace objectUtil {
     const mergedShape = mergeShapes(first._def.shape(), second._def.shape());
     const merged: any = new ZodObject({
       t: ZodTypes.object,
-      checks: [...(first._def.checks || []), ...(second._def.checks || [])],
+      effects: [...(first._def.effects || []), ...(second._def.effects || [])],
       unknownKeys: first._def.unknownKeys,
       catchall: first._def.catchall,
       // params: {

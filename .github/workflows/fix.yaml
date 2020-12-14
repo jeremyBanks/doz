@@ -1,75 +1,35 @@
-name: CI
+name: Fix, Format, Regenerate
 
 on:
   push:
-  pull_request:
+  create:
   schedule:
-    - cron: '44 4 * * *'
+    - cron: '33 3 * * SAT'
   workflow_dispatch:
 
 jobs:
-  node:
-    needs: []
+  fix:
     runs-on: Ubuntu-20.04
-    strategy:
-      matrix:
-        node: [ '14' ]
-        typescript: [ '3.8', '4.1' ]
-    name: 💎 Test with TypeScript ${{ matrix.typescript }} on Node ${{ matrix.node }}
+    name: Fix
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
-      - run: npm install
-      - run: npm install typescript@${{ matrix.typescript }}
-      - run: npm run-script build
-      - run: npm test
-      - run: npm run-script check-format
-
-  deno:
-    needs: []
-    runs-on: Ubuntu-20.04
-    strategy:
-      matrix:
-        deno: [ '1' ]
-    name: 🦕 Test with Deno ${{ matrix.deno }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: denolib/setup-deno@v2
-        with:
-          deno-version: ${{ matrix.deno }}
-      - run: |
-          cd deno
-          deno test
-
-  autofix:
-    needs: []
-    if: github.event_name != 'pull_request'
-    runs-on: Ubuntu-20.04
-    name: ⚙️ Automatically Format and Build
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-      - uses: denolib/setup-deno@v2
-        with:
-          deno-version: '1'
-      - run: npm install
-      - name: Rebuild deno/
-        run: deno run --allow-read --allow-write deno/build.ts
-      - name: Format with Prettier
-        run: npm run-script format
+          node-version: 14
+      - run: yarn install
+      - run: yarn fix:lint
+      - run: yarn build:deno
+      - run: yarn fix:format
       - name: Check for Changes
         id: check
         run: |
+          git add .
           git status
           declare had_changes="$(
             [[ -n "$(git status --porcelain)" ]] && echo true || echo false
           )"
           echo "::set-output name=had-changes::${had_changes}"
-      - name: Push Changes
+      - name: Push All Changes
         if: steps.check.outputs.had-changes == 'true'
         run: |
           declare br="
@@ -89,11 +49,11 @@ jobs:
           export GIT_AUTHOR_NAME="${author_name}"
           export GIT_AUTHOR_EMAIL="${author_email}"
           export GIT_COMMITTER_DATE="${date}"
-          export GIT_COMMITTER_NAME="${author_name}"
-          export GIT_COMMITTER_EMAIL="${author_email}"
+          export GIT_COMMITTER_NAME="github-actions"
+          export GIT_COMMITTER_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
           git remote rm origin
           git remote add origin "https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
           git checkout "${branch}"
           git add .
-          git commit -m "⚙️ rebuild ${short_hash} (${short_subject})${br}${br}${current_action_url}"
+          git commit -m "fix ${short_hash} (${short_subject})${br}${br}${current_action_url}"
           git push --set-upstream origin "${branch}"

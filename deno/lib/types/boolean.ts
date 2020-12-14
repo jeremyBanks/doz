@@ -1,4 +1,4 @@
-import * as z from './base.ts';
+import * as z from "./base.ts";
 // import { ZodUndefined } from './undefined';
 // import { ZodNull } from './null';
 // import { ZodUnion } from './union';

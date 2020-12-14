@@ -1,9 +1,7 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-test('dummy test recursive', () => {
-  expect(true).toBeTruthy();
-});
+test("test", () => {});
 // import * as z from '../index';
 
 // interface A {

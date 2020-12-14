@@ -1,9 +1,9 @@
-import * as z from './base.ts';
+import { errorUtil } from "../helpers/errorUtil.ts";
 // import { ZodUndefined } from './undefined';
 // import { ZodNull } from './null';
 // import { ZodUnion } from './union';
-import { StringValidation, ZodIssueCode } from '../ZodError.ts';
-import { errorUtil } from '../helpers/errorUtil.ts';
+import { StringValidation, ZodIssueCode } from "../ZodError.ts";
+import * as z from "./base.ts";
 
 export interface ZodStringDef extends z.ZodTypeDef {
   t: z.ZodTypes.string;
@@ -13,6 +13,7 @@ export interface ZodStringDef extends z.ZodTypeDef {
   };
 }
 
+// eslint-disable-next-line
 const emailRegex = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
 const uuidRegex = /([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}/i;
 
@@ -22,19 +23,19 @@ export class ZodString extends z.ZodType<string, ZodStringDef> {
 
   toJSON = () => this._def;
   min = (minLength: number, message?: errorUtil.ErrMessage) =>
-    this.refinement(data => data.length >= minLength, {
+    this.refinement((data) => data.length >= minLength, {
       code: ZodIssueCode.too_small,
       minimum: minLength,
-      type: 'string',
+      type: "string",
       inclusive: true,
       ...errorUtil.errToObj(message),
     });
 
   max = (maxLength: number, message?: errorUtil.ErrMessage) =>
-    this.refinement(data => data.length <= maxLength, {
+    this.refinement((data) => data.length <= maxLength, {
       code: ZodIssueCode.too_big,
       maximum: maxLength,
-      type: 'string',
+      type: "string",
       inclusive: true,
       ...errorUtil.errToObj(message),
     });
@@ -46,9 +47,9 @@ export class ZodString extends z.ZodType<string, ZodStringDef> {
   protected _regex = (
     regex: RegExp,
     validation: StringValidation,
-    message?: errorUtil.ErrMessage,
+    message?: errorUtil.ErrMessage
   ) =>
-    this.refinement(data => regex.test(data), {
+    this.refinement((data) => regex.test(data), {
       validation,
       code: ZodIssueCode.invalid_string,
 
@@ -56,11 +57,11 @@ export class ZodString extends z.ZodType<string, ZodStringDef> {
     });
 
   email = (message?: errorUtil.ErrMessage) =>
-    this._regex(emailRegex, 'email', message);
+    this._regex(emailRegex, "email", message);
 
   url = (message?: errorUtil.ErrMessage) =>
     this.refinement(
-      data => {
+      (data) => {
         try {
           new URL(data);
           return true;
@@ -70,18 +71,18 @@ export class ZodString extends z.ZodType<string, ZodStringDef> {
       },
       {
         code: ZodIssueCode.invalid_string,
-        validation: 'url',
+        validation: "url",
         ...errorUtil.errToObj(message),
-      },
+      }
     );
 
   // url = (message?: errorUtil.ErrMessage) => this._regex(urlRegex, 'url', message);
 
   uuid = (message?: errorUtil.ErrMessage) =>
-    this._regex(uuidRegex, 'uuid', message);
+    this._regex(uuidRegex, "uuid", message);
 
   regex = (regexp: RegExp, message?: errorUtil.ErrMessage) =>
-    this._regex(regexp, 'regex', message);
+    this._regex(regexp, "regex", message);
 
   nonempty = (message?: errorUtil.ErrMessage) =>
     this.min(1, errorUtil.errToObj(message));

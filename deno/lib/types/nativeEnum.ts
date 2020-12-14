@@ -1,4 +1,4 @@
-import * as z from './base.ts';
+import * as z from "./base.ts";
 
 export interface ZodNativeEnumDef<T extends EnumLike = EnumLike>
   extends z.ZodTypeDef {

@@ -1,9 +1,9 @@
 // @ts-ignore TS6133
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from "@jest/globals";
 
-import * as z from '../index';
+import * as z from "../index";
 
-test('all errors', () => {
+test("all errors", () => {
   const propertySchema = z.string();
   const schema = z.object({
     a: propertySchema,
@@ -19,8 +19,8 @@ test('all errors', () => {
     expect(error.flatten()).toEqual({
       formErrors: [],
       fieldErrors: {
-        a: ['Expected string, received null'],
-        b: ['Expected string, received null'],
+        a: ["Expected string, received null"],
+        b: ["Expected string, received null"],
       },
     });
   }

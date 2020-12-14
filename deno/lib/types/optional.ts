@@ -1,4 +1,4 @@
-import { ZodType, ZodTypeAny, ZodTypeDef, ZodTypes } from './base.ts';
+import { ZodType, ZodTypeAny, ZodTypeDef, ZodTypes } from "./base.ts";
 
 // import * as z from './base';
 // type asdf = ZodTypeAny
@@ -15,9 +15,9 @@ export type ZodOptionalType<
 > = T extends ZodOptional<ZodTypeAny> ? T : ZodOptional<T>;
 
 export class ZodOptional<T extends ZodTypeAny> extends ZodType<
-  T['_output'] | undefined,
+  T["_output"] | undefined,
   ZodOptionalDef<T>,
-  T['_input'] | undefined
+  T["_input"] | undefined
 > {
   // An optional optional is the original optional
   // optional: () => ZodOptionalType<this> = () => this as ZodOptionalType<this>;
