@@ -43,6 +43,9 @@ jobs:
         working-directory: ./deno/lib
       - run: deno run ./mod.ts
         working-directory: ./deno/lib
+      - run: deno bundle ./mod.ts ./bundle.js && deno run ./bundle.js
+        working-directory: ./deno/lib
+        continue-on-error: true
 
   lint:
     runs-on: Ubuntu-20.04
