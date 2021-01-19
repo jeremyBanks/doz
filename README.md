@@ -18,40 +18,50 @@ if you're happy and you know it, star this repo ⭐
 
 <!-- **Zod 2 is coming! Follow [@colinhacks](https://twitter.com/colinhacks) to stay updated and discuss the future of Zod.** -->
 
-### **Sept 17 — Zod 2 is now in beta!**
+### Migrating from v1
 
-You should be able to upgrade from v1 to v2 without any breaking changes to your code. Zod 2 is recommended for all new projects.
+If you're upgrading straight to v3 from v1, you'll need to be aware of the breaking changes introduced in both v2 and v3. The v1->v2 migration guide is [here](https://github.com/colinhacks/zod/tree/v2).
+
+### Migrating from v2
+
+You can install v3 with `zod@next`. (v2 will continue to be availabe with `zod@beta` for the time being.)
 
 ```
-
-npm install zod@beta
-yarn add zod@beta
+npm install zod@next
+yarn add zod@next
 ```
 
-Here are some of the new features.
+#### Breaking changes in v3
 
-- Transformers! These let you provide default values, do casting/coercion, and a lot more. Read more here: [Transformers](#transformers)
-- Asynchronous refinements and new `.parseAsync` and `.safeParseAsync` methods. Read more here: [Refinements](#refinements)
-- Schema parsing now returns a deep clone of the data you pass in (instead of the _exact_ value you pass in)
-- Object schemas now strip unknown keys by default. There are also new object methods: `.passthrough()`, `.strict()`, and `.catchall()`. Read more here: [Objects](#objects)
+- The minimum TypeScript version has increased from 3.7 to _4.1_. Several features have been rewritten to use [recursive conditional types](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types), an incredibly powerful new feature introduced in TS4.1.
+- Transformer syntax. Previously transformers required an input, an output schema, and a function to tranform between them. You created transformers like `z.transform(A, B, func)`, where `A` and `B` are Zod schemas. This is no longer the case. Accordingly:
 
-In almost all cases, you'll be able to upgrade to Zod 2 without changing any code. Here are some of the (very minor) breaking changes:
+  ⚠️ The old syntax (`z.transformer(A, B, func)`) is no longer available.
+  ⚠️ The convenience method `A.transform(B, func)` is no longer available.
 
-- Parsing now returns a _deep clone_ of the data you pass in. Previously it returned the exact same object you passed in.
-- Relatedly, Zod _no longer_ supports cyclical _data_. Recursive schemas are still supported, but Zod can't properly parse nested objects that contain cycles.
-- Object schemas now strip unknown keys by default, instead of throwing an error
-- Optional and nullable schemas are now represented with the dedicated ZodOptional and ZodNullable classes, instead of using ZodUnion.
+  Instead, you apply transformations by simply using the `.transform()` method that exists on all Zod schema. For example: `z.string().transform(val => val.length)`.
 
----
+  Importantly, transformations are now _interleaved_ with refinements. So you can build chains of refinement + transformation logic that are executed in sequence:
 
-Aug 30 — zod@1.11 was released with lots of cool features!
+  ```ts
+  const test = z
+    .string()
+    .transform((val) => val.length)
+    .refine((val) => val > 5, { message: "Input is too short" })
+    .transform((val) => val * 2);
 
-- All schemas now have a `.safeParse` method. This lets you validate data in a more functional way, similar to `io-ts`: https://github.com/colinhacks/zod#safe-parse
-- String schemas have a new `.regex` refinement method: https://github.com/colinhacks/zod#strings
-- Object schemas now have two new methods: `.primitives()` and `.nonprimitives()`. These methods let you quickly pick or omit primitive fields from objects, useful for validating API inputs: https://github.com/colinhacks/zod#primitives-and-nonprimitives
-- Zod now provides `z.nativeEnum()`, which lets you create z Zod schema from an existing TypeScript `enum`: https://github.com/colinhacks/zod#native-enums
+  test.parse("12characters"); // => 24
+  ```
 
-<!-- > ⚠️ You might be encountering issues building your project if you're using zod@<1.10.2. This is the result of a bug in the TypeScript compiler. To solve this without updating, set `"skipLibCheck": true` in your tsconfig.json "compilerOptions". This issue is resolved in zod@1.10.2 and later. -->
+- Type guards (the `.check()` method) have been removed. Type guards interact with transformers in unintuitive ways so they were removed. Use `.safeParse` instead.
+
+<!-- - Errors that occur inside refinement functions are now caught. Previously these errors were considered unexpected and would crash the process (unless caught externally to Zod). If an error is caught, the refinement fails. -->
+
+<!-- _Additional updates + features_ -->
+
+<!-- - Support for Deno!
+- Support for ES Modules! -->
+<!-- - Errors that occur inside refinement functions are now caught. Previously these errors were considered unexpected and would crash the process (unless caught externally to Zod). If an error is caught, the refinement fails. -->
 
 # What is Zod
 
@@ -307,41 +317,17 @@ console.log(result.data);
 
 `.check(data:unknown)`
 
-You can also use a Zod schema as a type guard using the schema's `.check()` method, like so:
-
-```ts
-const stringSchema = z.string();
-const blob: any = "Albuquerque";
-if (stringSchema.check(blob)) {
-  // blob is now of type `string`
-  // within this if statement
-}
-```
-
-You can use the same method to check for invalid data:
-
-```ts
-const stringSchema = z.string();
-
-const process = (blob: any) => {
-  if (!stringSchema.check(blob)) {
-    throw new Error("Not a string");
-  }
-
-  // blob is now of type `string`
-  // underneath the if statement
-};
-```
+> ⚠️ Type guards have been removed in Zod 3 because of compatibility issues with transformers. You should safeParse to achieve a similar result that is compatible with transformers.
 
 ### Refinements
 
-> ⚠️ Refinements must not throw. Make sure they always return false to signal failure.
+> ⚠️ Refinements must not throw. Instead they should return a falsy value to signal failure.
 
 `.refine(validator: (data:T)=>any, params?: RefineParams)`
 
-Zod let you provide custom validation logic via _refinements_.
+Zod lets you provide custom validation logic via _refinements_.
 
-Zod was designed to mirror TypeScript as closely as possible. But there are many so-called "refinement types" you may wish to check for that can't be represented in TypeScript's type system. For instance: checking that a number is an Int or that a string is a valid email address.
+Zod was designed to mirror TypeScript as closely as possible. But there are many so-called "refinement types" you may wish to check for that can't be represented in TypeScript's type system. For instance: checking that a number is an integer or that a string is a valid email address.
 
 For example, you can define a custom validation check on _any_ Zod schema with `.refine` :
 
@@ -1369,8 +1355,9 @@ class Test {
 const TestSchema = z.instanceof(Test);
 
 const blob: any = "whatever";
-if (TestSchema.check(blob)) {
-  blob.name; // Test instance
+const parsed = TestSchema.safeParse(blob);
+if (parsed.success) {
+  parsed.data; // instance of Test
 }
 ```
 
@@ -1553,30 +1540,33 @@ User.omit({ outer: { inner: { prop2: true } } }); // { outer: { prop1: string, i
 
 You can integrate custom data transformations into your schemas with transformers. Transformers are just another type of Zod schema.
 
-> ⚠️ Transformers must not throw. Make sure to use refinements before the transformer to make sure the input can be parsed by the transformer.
+> ⚠️ Transformation functions must not throw. Make sure to use refinements before the transformer to make sure the input can be parsed by the transformer.
+
+> ⚠️ The `z.transformer(A, B, func)` syntax was removed in Zod 3.
 
 ### z.transformer()
 
-```ts
-const countLength = z.transformer(
-  z.string(),
-  z.number(),
-  (myString) => myString.length
-);
-
-countLength.parse("string"); // => 6
-```
-
-This lets you perform coercion, similar to Yup. You still need to provide the coercion logic yourself.
+You use transformers using the `.transform()` method.
 
 ```ts
-const coercedString = z.transformer(z.unknown(), z.string(), (val) => {
-  return `${val}`;
-});
-
-coercedString.parse(false); // => "false"
-coercedString.parse(12); // => "12"
+const stringToNumber = z.string().transform((val) => myString.length);
+stringToNumber.parse("string"); // => 6
 ```
+
+#### Chaining order
+
+Note that `stringToNumber` above is an instance of the `ZodTransformer` subclass. It is NOT an instance of `ZodString`. If you want to use the built-in methods of `ZodString` (e.g. `.email()`) you must apply those methods _before_ any transformations.
+
+```ts
+const emailToDomain = z
+  .string()
+  .email()
+  .transform((val) => val.split("@")[1]);
+
+emailToDomain.parse("colinhacks@example.com"); // => example.com
+```
+
+#### Async transformations
 
 Transformations can also be async.
 
@@ -1592,68 +1582,56 @@ const IdToUser = z.transformer(
 
 > ⚠️ If your schema contains asynchronous transformers, you must use .parseAsync() or .safeParseAsync() to parse data. Otherwise Zod will throw an error.
 
-### .transform()
-
-For convenience, ALL Zod schemas (not just transformers) has a `.transform` method. The first argument lets you specify a "destination schema" which defines the type that the data should be transformed _into_.
-
-```ts
-const lengthChecker = z.string().transform(z.boolean(), (val) => {
-  return val.length > 5;
-});
-
-lengthChecker.parse("asdf"); // => false;
-lengthChecker.parse("qwerty"); // => true;
-```
-
-You can omit the first argument, in which case Zod assumes you aren't transforming the data type:
-
-```ts
-z.string()
-  .transform((val) => val.replace("pretty", "extremely"))
-  .transform((val) => val.toUpperCase())
-  .transform((val) => val.split(" ").join("👏"))
-  .parse("zod 2 is pretty cool");
-
-// => "ZOD👏2👏IS👏EXTREMELY👏COOL"
-```
-
 ### Default values
 
-Using transformers, Zod lets you supply default values for your schemas.
+You can use transformers to implement the concept of "default values" in Zod.
 
 ```ts
-const stringWithDefault = z.transformer(
-  z.string().optional(),
-  z.string(),
-  (val) => val || "default value"
-);
+const stringWithDefault = z
+  .string()
+  .optional()
+  .transform((val) => {
+    return typeof val !== "undefined" ? val : "tuna";
+  });
+
+stringWithDefault.parse(undefined); // => "tuna"
 ```
 
-Equivalently you can express this using the built-in `.default()` method, available on all Zod schemas. The default value will be used if and only if the schema is `undefined` .
+### .default
+
+You can also use the provided convenience method `.default` like so:
 
 ```ts
-z.string().default("default value");
+const stringWithDefault = z.string().default("tuna");
+```
+
+Optionally, you can pass a function into `.default` that will be re-executed whenever a default value needs to be generated:
+
+```ts
+const numberWithRandomDefault = z.number().default(Math.random);
+
+numberWithRandomDefault.parse(undefined); // => 0.4413456736055323
+numberWithRandomDefault.parse(undefined); // => 0.1871840107401901
+numberWithRandomDefault.parse(undefined); // => 0.7223408162401552
 ```
 
 ### Type inference for transformers
 
-There are special rules surrounding type inference for transformers.
+Every Zod schema is associated with an _input type_ and and _output type_. For most schemas (e.g. `z.string()`) these two are the same. But for Transformers, they are different. For instance `z.string().transform(val => val.length)` has an input of `string` and an output of `number`.
+
+Normally you can use `z.infer<typeof A>` to extract the inferred type of schema A. But for schemas we introduce two new methods that allow you to separately extract the input _and_ output independently.
 
 ```ts
-const stringToNumber = z.transformer(
-  z.string(),
-  z.number(),
-  myString => myString.length,
-);
-
-// ⚠️ Important: z.infer gives the return type!!
-type type = z.infer<stringToNumber>; // number
+const stringToNumber = z.string().transform(val => val.length)
 
 // it is equivalent to z.output<>
 type out = z.output<stringToNumber>; // number
 
 // you can use z.input<> to get the input type
 type in = z.input<stringToNumber>; // string
+
+// ⚠️ Important: z.infer gives the OUTPUT type!
+type type = z.infer<stringToNumber>; // number
 ```
 
 ## Errors
